@@ -1,0 +1,5 @@
+{
+  "name": "Secret Animated Letter",
+  "description": "A password-protected webpage that reveals a personal letter with a beautiful typing animation, simulating it being written in real-time.",
+  "requestFramePermissions": []
+}
