@@ -1,63 +1,54 @@
-import React, { useState, useCallback } from 'react';
-import { useTypingEffect } from '../hooks/useTypingEffect';
-import { PHOTO_URLS } from '../constants';
+import React, { useState, useCallback, useMemo } from 'react';
 import PhotoGallery from './PhotoGallery';
+import JournalTextEntry from './JournalTextEntry';
+import type { JournalEntry } from '../types';
 
 interface LetterViewProps {
-  content: string;
+  entries: JournalEntry[];
 }
 
-const LetterView: React.FC<LetterViewProps> = ({ content }) => {
-  const [isTypingComplete, setIsTypingComplete] = useState(false);
-  const [showGallery, setShowGallery] = useState(false);
+const LetterView: React.FC<LetterViewProps> = ({ entries }) => {
+  const [completedEntryIds, setCompletedEntryIds] = useState(new Set<string>());
+  const [revealedPhotoIds, setRevealedPhotoIds] = useState(new Set<string>());
+
+  const handleAnimationComplete = useCallback((id: string) => {
+    setCompletedEntryIds(prev => new Set(prev).add(id));
+  }, []);
+
+  const handleRevealPhotos = useCallback((id: string) => {
+    setRevealedPhotoIds(prev => new Set(prev).add(id));
+  }, []);
+
+  const groupedEntries = useMemo(() => {
+    return entries.reduce<Record<string, JournalEntry[]>>((acc, entry) => {
+      if (!acc[entry.date]) acc[entry.date] = [];
+      acc[entry.date].push(entry);
+      return acc;
+    }, {});
+  }, [entries]);
+
+  const allPhotos = useMemo(() =>
+    entries
+      .filter((entry): entry is Extract<JournalEntry, { type: 'photos' }> => entry.type === 'photos')
+      .flatMap(entry => entry.items),
+    [entries]
+  );
+
+  const animatableEntryIds = useMemo(() =>
+    entries.filter(e => e.type === 'letter' || e.type === 'note').map(e => e.id),
+    [entries]
+  );
   
-  // Use useCallback to memoize the onComplete callback.
-  // This prevents it from being recreated on every render, which was causing
-  // the useTypingEffect hook to reset its interval constantly.
-  const handleTypingComplete = useCallback(() => {
-    setIsTypingComplete(true);
-  }, []); // Empty dependency array means this function is created once.
+  // FIX: Replaced .findLast() with a compatible alternative for broader JS environment support.
+  const lastCompletedAnimatable = [...animatableEntryIds].reverse().find(id => completedEntryIds.has(id));
+  const nextAnimatableIndex = animatableEntryIds.findIndex(id => id === lastCompletedAnimatable) + 1;
+  
+  // The entry currently animating is the one after the last completed one,
+  // or the very first one if no entries are completed yet.
+  const currentAnimatingId = animatableEntryIds[nextAnimatableIndex] ?? (completedEntryIds.size === 0 ? animatableEntryIds[0] : null);
 
-  const displayedText = useTypingEffect(content, 50, handleTypingComplete);
-
-  const triggerPhrase = "Do you wanna see?";
-
-  const renderContent = () => {
-    // When typing is not complete, show the animated text with a cursor.
-    if (!isTypingComplete) {
-      return (
-        <>
-          {displayedText}
-          <span className="animate-pulse">|</span>
-        </>
-      );
-    }
-
-    // When typing is complete, find the trigger phrase and make it clickable.
-    const parts = content.split(triggerPhrase);
-    
-    // Failsafe in case the trigger phrase is not found in the letter content.
-    if (parts.length < 2) {
-      return content;
-    }
-
-    return (
-      <>
-        {parts[0]}
-        <span
-          className="cursor-pointer text-rose-500 hover:underline font-bold transition-colors"
-          onClick={() => setShowGallery(true)}
-          role="button"
-          tabIndex={0}
-          onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && setShowGallery(true)}
-          aria-label="Click to view photos"
-        >
-          {triggerPhrase}
-        </span>
-        {parts[1]}
-      </>
-    );
-  };
+  let photoIndexOffset = 0;
+  let animatableEntryIndex = -1;
 
   return (
     <div
@@ -83,24 +74,80 @@ const LetterView: React.FC<LetterViewProps> = ({ content }) => {
           zIndex: 1,
         }}
       >
-        {/* Subtle stains for extra vintage effect */}
         <img src="https://svgshare.com/i/15uC.svg" alt="stain" style={{position:'absolute',top:'10%',left:'8%',width:'120px',opacity:0.13,zIndex:2,pointerEvents:'none'}} />
         <img src="https://svgshare.com/i/15uC.svg" alt="stain" style={{position:'absolute',bottom:'12%',right:'10%',width:'90px',opacity:0.11,zIndex:2,pointerEvents:'none'}} />
         <div
-          className="font-caveat text-[1.7rem] sm:text-3xl text-stone-800 leading-relaxed whitespace-pre-wrap vintage-typing"
+          className="font-caveat text-[1.7rem] sm:text-3xl text-stone-800 leading-relaxed vintage-typing"
           style={{
             color: '#5b4636',
             textShadow: '0 1px 0 #f5ecd7, 0 2px 2px #d2b48c',
             zIndex: 3,
             position: 'relative',
-            minHeight: '700px',
             width: '100%',
             paddingBottom: '32px',
           }}
         >
-          {renderContent()}
+          {Object.entries(groupedEntries).map(([date, entriesOnDate]) => {
+            // A date header and its content are only visible if at least one entry for that date is active.
+            // An entry is active if it's completed, currently animating, or a revealed photo gallery.
+            const isDateVisible = entriesOnDate.some(entry => 
+              completedEntryIds.has(entry.id) || 
+              entry.id === currentAnimatingId ||
+              (entry.type === 'photos' && revealedPhotoIds.has(entry.id))
+            );
+
+            if (!isDateVisible) {
+              return null;
+            }
+
+            const dateHeader = (
+              <div key={date} className="mt-6 mb-4 border-b border-stone-300/70 pb-2">
+                <p className="text-lg font-semibold text-stone-600">{new Date(date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
+              </div>
+            );
+            
+            const content = entriesOnDate.map((entry) => {
+              if (entry.type === 'letter' || entry.type === 'note') {
+                animatableEntryIndex++;
+                const myIndex = animatableEntryIndex;
+                const canAnimate = myIndex === 0 || completedEntryIds.has(animatableEntryIds[myIndex - 1]);
+
+                if (!canAnimate) return null;
+
+                return (
+                  <JournalTextEntry
+                    key={entry.id}
+                    entry={entry}
+                    onAnimationComplete={handleAnimationComplete}
+                    onRevealPhotos={handleRevealPhotos}
+                  />
+                );
+              }
+              
+              if (entry.type === 'photos') {
+                // Find the entry that reveals this photo gallery
+                const revealingEntry = entries.find(e => (e.type === 'letter' || e.type === 'note') && e.revealsPhotos === entry.id);
+                // Photos are revealed either by clicking a button OR if there's no prompt for them (for backwards compatibility/default show)
+                const isRevealed = revealedPhotoIds.has(entry.id) || !revealingEntry;
+                if (!isRevealed) return null;
+
+                const gallery = (
+                  <PhotoGallery 
+                    key={entry.id}
+                    items={entry.items}
+                    allPhotoUrlsForLightbox={allPhotos.map(p => p.url)}
+                    baseIndex={photoIndexOffset}
+                  />
+                );
+                photoIndexOffset += entry.items.length;
+                return gallery;
+              }
+              return null;
+            });
+
+            return [dateHeader, ...content];
+          })}
         </div>
-        {showGallery && <PhotoGallery urls={PHOTO_URLS} />}
       </div>
     </div>
   );

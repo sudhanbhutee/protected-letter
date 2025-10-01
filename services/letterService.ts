@@ -1,4 +1,5 @@
-import { SECRET_PASSWORD_HASH, LETTER_CONTENT } from '../constants';
+import { SECRET_PASSWORD_HASH, JOURNAL_ENTRIES } from '../constants';
+import type { JournalEntry } from '../types';
 
 /**
  * Converts an ArrayBuffer to a hexadecimal string.
@@ -24,23 +25,19 @@ const sha256 = async (text: string): Promise<string> => {
 };
 
 /**
- * Verifies a password by hashing it and comparing it to a stored hash.
- * This is a secure, frontend-only method.
+ * Verifies a password and returns the journal entries.
  * @param password The password entered by the user.
- * @returns A promise that resolves with the letter content if the password is correct.
+ * @returns A promise that resolves with the journal entries if the password is correct.
  * @throws An error if the password is incorrect.
  */
-export const getLetter = async (password: string): Promise<string> => {
+export const getLetter = async (password: string): Promise<JournalEntry[]> => {
   // Trim whitespace from the input and then hash it.
   const inputHash = await sha256(password.trim());
 
   // Securely compare the input hash with the stored hash
   if (inputHash === SECRET_PASSWORD_HASH) {
-    // If they match, return the letter content. The async function handles the promise.
-    return LETTER_CONTENT;
+    return JOURNAL_ENTRIES;
   } else {
-    // If they don't match, throw a detailed error that includes the generated hash.
-    // This makes debugging much easier by showing the exact output of the hash function in the UI.
     throw new Error(`Authentication failed`);
   }
 };

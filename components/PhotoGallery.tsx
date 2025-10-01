@@ -1,50 +1,58 @@
 import React, { useState } from 'react';
 import Lightbox from './Lightbox';
+import type { Photo } from '../types';
 
 interface PhotoGalleryProps {
-  urls: string[];
+  items: Photo[];
+  allPhotoUrlsForLightbox: string[];
+  baseIndex: number;
 }
 
-const PhotoGallery = React.forwardRef<HTMLDivElement, PhotoGalleryProps>(({ urls }, ref) => {
+const PhotoGallery = React.forwardRef<HTMLDivElement, PhotoGalleryProps>(({ items, allPhotoUrlsForLightbox, baseIndex }, ref) => {
   const [currentImageIndex, setCurrentImageIndex] = useState<number | null>(null);
 
-  const openLightbox = (index: number) => setCurrentImageIndex(index);
-  const closeLightbox = () => setCurrentImageIndex(null);
-  
-  const goToNext = () => {
-    setCurrentImageIndex(prevIndex => (prevIndex === null ? 0 : (prevIndex + 1) % urls.length));
+  const openLightbox = (photoIndex: number) => {
+    setCurrentImageIndex(baseIndex + photoIndex);
   };
-  
+  const closeLightbox = () => setCurrentImageIndex(null);
+
+  const goToNext = () => {
+    setCurrentImageIndex(prevIndex => (prevIndex === null ? 0 : (prevIndex + 1) % allPhotoUrlsForLightbox.length));
+  };
+
   const goToPrevious = () => {
-    setCurrentImageIndex(prevIndex => (prevIndex === null ? 0 : (prevIndex + urls.length - 1) % urls.length));
+    setCurrentImageIndex(prevIndex => (prevIndex === null ? 0 : (prevIndex + allPhotoUrlsForLightbox.length - 1) % allPhotoUrlsForLightbox.length));
   };
 
   const isLightboxOpen = currentImageIndex !== null;
 
   return (
     <>
-      <div ref={ref} className="mt-12 border-t border-stone-300 pt-8">
-        <h3 className="font-caveat text-3xl text-rose-500 mb-6 text-center">
-          A few memories...
-        </h3>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {urls.map((url, index) => (
+      <div ref={ref} className="mt-4 mb-8 animate-fadeIn">
+        <div className="sm:columns-2 sm:gap-6 space-y-6">
+          {items.map(({ url, description }, photoIndex) => (
             <div
               key={url}
-              className="rounded-lg overflow-hidden shadow-md stagger-fade-in cursor-pointer group"
-              style={{ animationDelay: `${index * 150}ms` }}
-              onClick={() => openLightbox(index)}
-              role="button"
-              tabIndex={0}
-              onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && openLightbox(index)}
-              aria-label={`View Memory ${index + 1} in full screen`}
+              className="photo-item p-2 pb-4 bg-white/80 shadow-lg rounded-md break-inside-avoid"
             >
-              <img 
-                src={url} 
-                alt={`Memory ${index + 1}`} 
-                className="w-full h-full object-cover aspect-[4/3] transition-transform duration-300 group-hover:scale-105" 
-                loading="lazy"
-              />
+              <div
+                className="overflow-hidden cursor-pointer group"
+                onClick={() => openLightbox(photoIndex)}
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && openLightbox(photoIndex)}
+                aria-label={`View photo in full screen`}
+              >
+                <img 
+                  src={url} 
+                  alt={description || `Memory photo`} 
+                  className="w-full h-full object-cover aspect-[4/3] transition-transform duration-300 group-hover:scale-105 rounded-sm" 
+                  loading="lazy"
+                />
+              </div>
+              {description && (
+                <p className="font-caveat text-xl text-center text-stone-700 mt-3">{description}</p>
+              )}
             </div>
           ))}
         </div>
@@ -52,7 +60,7 @@ const PhotoGallery = React.forwardRef<HTMLDivElement, PhotoGalleryProps>(({ urls
 
       {isLightboxOpen && (
         <Lightbox
-          urls={urls}
+          urls={allPhotoUrlsForLightbox}
           currentIndex={currentImageIndex}
           onClose={closeLightbox}
           onNext={goToNext}

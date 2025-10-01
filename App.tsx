@@ -1,11 +1,11 @@
-
 import React, { useState, useCallback } from 'react';
 import PasswordPrompt from './components/PasswordPrompt';
 import LetterView from './components/LetterView';
 import { getLetter } from './services/letterService';
+import type { JournalEntry } from './types';
 
 const App: React.FC = () => {
-  const [letterContent, setLetterContent] = useState<string | null>(null);
+  const [letterContent, setLetterContent] = useState<JournalEntry[] | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   const handleUnlock = useCallback(async (password: string) => {
@@ -41,7 +41,7 @@ const App: React.FC = () => {
           // Use `aria-hidden` to improve accessibility by hiding the content from screen readers when not visible.
           aria-hidden={!isAuthenticated}
         >
-          {isAuthenticated && <LetterView content={letterContent} />}
+          {isAuthenticated && <LetterView entries={letterContent} />}
         </div>
       </div>
     </div>
