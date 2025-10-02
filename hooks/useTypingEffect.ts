@@ -11,7 +11,6 @@ export const useTypingEffect = (
   const [userId, setUserId] = useState<string | null>(null);
 
   useEffect(() => {
-    // Fetch and set the browser fingerprint once
     const fetchUserId = async () => {
       const id = await getBrowserFingerprint();
       setUserId(id);
@@ -20,49 +19,42 @@ export const useTypingEffect = (
   }, []);
 
   useEffect(() => {
-    if (!userId) return; // Wait until userId is available
+    // Wait until userId and text are available
+    if (!userId || !text) return;
 
-    let isCancelled = false; // Prevent state updates if the component unmounts
+    // If content has been seen before, skip the animation entirely.
+    if (contentId && isContentSeen(contentId, userId)) {
+      setDisplayedText(text);
+      onComplete?.();
+      return;
+    }
 
-    const handleTypingEffect = async () => {
-      if (!text) return;
+    let timeoutId: number;
+    let currentIndex = 0;
 
-      setDisplayedText(''); // Reset on text change
-      let i = 0;
-
-      // Check if the content is already seen
-      if (contentId && isContentSeen(contentId, userId)) {
-        setDisplayedText(text); // Skip animation for seen content
+    const typeCharacter = () => {
+      if (currentIndex < text.length) {
+        setDisplayedText((prev) => prev + text.charAt(currentIndex));
+        currentIndex++;
+        timeoutId = window.setTimeout(typeCharacter, speed);
+      } else {
+        // Animation is complete
         onComplete?.();
-        return;
+        if (contentId) {
+          markContentAsSeen(contentId, userId);
+        }
       }
-
-      const intervalId = setInterval(() => {
-        if (isCancelled) {
-          clearInterval(intervalId);
-          return;
-        }
-
-        setDisplayedText((prev) => prev + text.charAt(i));
-        i++;
-        if (i >= text.length) {
-          clearInterval(intervalId);
-          onComplete?.();
-
-          // Mark content as seen
-          if (contentId) {
-            markContentAsSeen(contentId, userId);
-          }
-        }
-      }, speed);
-
-      return () => clearInterval(intervalId);
     };
+    
+    // Reset display text and start the typing animation
+    setDisplayedText('');
+    // Start with a timeout to allow the reset to render
+    timeoutId = window.setTimeout(typeCharacter, speed);
 
-    handleTypingEffect();
-
+    // Cleanup function to clear the timeout when the component unmounts
+    // or when dependencies change, preventing memory leaks.
     return () => {
-      isCancelled = true;
+      window.clearTimeout(timeoutId);
     };
   }, [text, speed, onComplete, contentId, userId]);
 

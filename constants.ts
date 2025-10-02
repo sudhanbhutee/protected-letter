@@ -130,7 +130,7 @@ export const JOURNAL_ENTRIES: JournalEntry[] = [
     id: 'note06-2025-10-01',
     date: '2025-10-01',
     type: 'note',
-    content: `You remember hajur lai ghar ko najik euta bread factory cha..dherai mitho smell aye ra thyo..so we bought some..`,
+    content: `You remember, hajur lai bhane ko the ni yaha Ghar ko najik euta bread factory cha..dherai mitho smell aye ra thyo..so we bought some..`,
     revealsPhotos: 'photos06-2025-10-01',
   },
   {

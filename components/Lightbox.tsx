@@ -48,15 +48,21 @@ const Lightbox: React.FC<LightboxProps> = ({ urls, currentIndex, onClose, onNext
     }
   };
 
-  const NavButton: React.FC<{onClick: () => void; 'aria-label': string; children: React.ReactNode; className?: string}> = ({onClick, children, ...props}) => (
+  const NavButton: React.FC<{onClick: (e: React.MouseEvent) => void; 'aria-label': string; children: React.ReactNode; className?: string}> = ({onClick, children, ...props}) => (
     <button
-      onClick={onClick}
+      onClick={(e) => {
+        e.stopPropagation(); // Prevent closing lightbox when clicking nav buttons
+        onClick(e);
+      }}
       className={`absolute top-1/2 -translate-y-1/2 p-2 bg-black/30 text-white rounded-full hover:bg-black/60 transition-colors focus:outline-none focus:ring-2 focus:ring-white ${props.className}`}
       aria-label={props['aria-label']}
     >
       {children}
     </button>
   );
+  
+  const currentUrl = urls[currentIndex];
+  const isVideo = currentUrl && currentUrl.endsWith('.mp4');
 
   return ReactDOM.createPortal(
     <div
@@ -76,29 +82,40 @@ const Lightbox: React.FC<LightboxProps> = ({ urls, currentIndex, onClose, onNext
         {/* Close Button */}
         <button
           onClick={handleClose}
-          className="absolute top-4 right-4 p-2 bg-black/30 text-white rounded-full hover:bg-black/60 transition-colors focus:outline-none focus:ring-2 focus:ring-white"
+          className="absolute top-4 right-4 p-2 bg-black/30 text-white rounded-full hover:bg-black/60 transition-colors focus:outline-none focus:ring-2 focus:ring-white z-10"
           aria-label="Close gallery"
         >
           <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" /></svg>
         </button>
 
         {/* Previous Button */}
-        <NavButton onClick={onPrev} aria-label="Previous image" className="left-4">
+        <NavButton onClick={() => onPrev()} aria-label="Previous image" className="left-4">
           <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" /></svg>
         </NavButton>
 
-        {/* Image Display */}
-        <div className="relative w-full max-w-5xl h-full max-h-[80vh]">
-           <img
-            key={currentIndex}
-            src={urls[currentIndex]}
-            alt={`Memory ${currentIndex + 1}`}
-            className="w-full h-full object-contain animate-fadeIn"
-          />
+        {/* Media Display */}
+        <div className="relative w-full max-w-5xl h-full max-h-[80vh] flex items-center justify-center">
+           {isVideo ? (
+             <video
+                key={currentIndex}
+                src={currentUrl}
+                className="w-full h-full object-contain animate-fadeIn"
+                controls
+                autoPlay
+                aria-label={`Memory ${currentIndex + 1}`}
+             />
+           ) : (
+             <img
+                key={currentIndex}
+                src={currentUrl}
+                alt={`Memory ${currentIndex + 1}`}
+                className="w-full h-full object-contain animate-fadeIn"
+             />
+           )}
         </div>
 
         {/* Next Button */}
-        <NavButton onClick={onNext} aria-label="Next image" className="right-4">
+        <NavButton onClick={() => onNext()} aria-label="Next image" className="right-4">
           <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" /></svg>
         </NavButton>
       </div>
