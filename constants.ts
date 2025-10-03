@@ -43,8 +43,8 @@ export const JOURNAL_ENTRIES: JournalEntry[] = [
     date: '2025-09-27',
     type: 'photos',
     items: [
-      { url: '/public/bird.jpg', description: 'We built a little home.' },
-      { url: '/public/bird01.jpg', description: 'resting after shower' },
+      { url: '/bird.jpg', description: 'We built a little home.' },
+      { url: '/bird01.jpg', description: 'resting after shower' },
     ]
   },
    {
@@ -59,11 +59,11 @@ export const JOURNAL_ENTRIES: JournalEntry[] = [
     date: '2025-09-27',
     type: 'photos',
     items: [
-      { url: '/public/bhagini01.jpg' },
-      { url: '/public/bhagini02.jpg' },
-      { url: '/public/with_kids01.jpg' },
-      { url: '/public/with_kids02.jpg', description: 'i know i am the one who always lecture you to take your meals on time and its me who lost weight, 17kg' },
-      { url: '/public/with_kids03.jpg' },
+      { url: '/bhagini01.jpg' },
+      { url: '/bhagini02.jpg' },
+      { url: '/with_kids01.jpg' },
+      { url: '/with_kids02.jpg', description: 'i know i am the one who always lecture you to take your meals on time and its me who lost weight, 17kg' },
+      { url: '/with_kids03.jpg' },
     ]
   },
   {
@@ -78,10 +78,10 @@ export const JOURNAL_ENTRIES: JournalEntry[] = [
     date: '2025-09-27',
     type: 'photos',
     items: [
-      { url: '/public/photo1.jpg',description: 'looks like king of insects..born with crown' },
-      { url: '/public/photo2.jpg', },
-      { url: '/public/photo3.jpg' },
-      { url: '/public/photo4.jpg', description: 'new addition to my pet collection...' },
+      { url: '/photo1.jpg',description: 'looks like king of insects..born with crown' },
+      { url: '/photo2.jpg', },
+      { url: '/photo3.jpg' },
+      { url: '/photo4.jpg', description: 'new addition to my pet collection...' },
     ]
   },
   {
@@ -102,9 +102,9 @@ export const JOURNAL_ENTRIES: JournalEntry[] = [
     date: '2025-10-01',
     type: 'photos',
     items: [
-      { url: '/public/mithi_birthday.jpg'},
-      { url: '/public/mithi_birthday01.jpg'},
-      { url: '/public/mithi_birthday02.mp4'},
+      { url: '/mithi_birthday.jpg'},
+      { url: '/mithi_birthday01.jpg'},
+      { url: '/mithi_birthday02.mp4'},
     ]
   },
   {
@@ -119,11 +119,11 @@ export const JOURNAL_ENTRIES: JournalEntry[] = [
     date: '2025-10-01',
     type: 'photos',
     items: [
-      { url: '/public/dashain.jpg', description: 'her eyes..' },
-      { url: '/public/dashain01.jpg'},
-      { url: '/public/dashain02.mp4', description: 'mela ma mithi..' },
-      { url: '/public/hair_clip.mp4.jpg', description: 'bought this in mela' },
-      { url: '/public/ice_cream.jpg', description: 'mela ma ice cream party for all the kids..ani return aune time pheri 2kg ice cream' },
+      { url: '/dashain.jpg', description: 'her eyes..' },
+      { url: '/dashain01.jpg'},
+      { url: '/dashain02.mp4', description: 'mela ma mithi..' },
+      { url: '/hair_clip.mp4.jpg', description: 'bought this in mela' },
+      { url: '/ice_cream.jpg', description: 'mela ma ice cream party for all the kids..ani return aune time pheri 2kg ice cream' },
     ]
   },
   {
@@ -138,7 +138,7 @@ export const JOURNAL_ENTRIES: JournalEntry[] = [
     date: '2025-10-01',
     type: 'photos',
     items: [
-      { url: '/public/bread.jpg', description: 'fresh baked..its still hot and tasty' },
+      { url: '/bread.jpg', description: 'fresh baked..its still hot and tasty' },
     ]
   },
  {
@@ -153,8 +153,8 @@ export const JOURNAL_ENTRIES: JournalEntry[] = [
     date: '2025-10-03',
     type: 'photos',
     items: [
-      { url: '/public/bird02.mp4', description: 'hijo evening ma bahira ghumi ra thyo' },
-      { url: '/public/bird03.mp4', description: 'maja le basera khai ra cha' },
+      { url: '/bird02.mp4', description: 'hijo evening ma bahira ghumi ra thyo' },
+      { url: '/bird03.mp4', description: 'maja le basera khai ra cha' },
     ]
   },
 ];
