@@ -43,8 +43,8 @@ export const JOURNAL_ENTRIES: JournalEntry[] = [
     date: '2025-09-27',
     type: 'photos',
     items: [
-      { url: '/private/bird.jpg', description: 'We built a little home.' },
-      { url: '/private/bird01.jpg', description: 'resting after shower' },
+      { url: '/public/bird.jpg', description: 'We built a little home.' },
+      { url: '/public/bird01.jpg', description: 'resting after shower' },
     ]
   },
    {
@@ -59,11 +59,11 @@ export const JOURNAL_ENTRIES: JournalEntry[] = [
     date: '2025-09-27',
     type: 'photos',
     items: [
-      { url: '/private/bhagini01.jpg' },
-      { url: '/private/bhagini02.jpg' },
-      { url: '/private/with_kids01.jpg' },
-      { url: '/private/with_kids02.jpg', description: 'i know i am the one who always lecture you to take your meals on time and its me who lost weight, 17kg' },
-      { url: '/private/with_kids03.jpg' },
+      { url: '/public/bhagini01.jpg' },
+      { url: '/public/bhagini02.jpg' },
+      { url: '/public/with_kids01.jpg' },
+      { url: '/public/with_kids02.jpg', description: 'i know i am the one who always lecture you to take your meals on time and its me who lost weight, 17kg' },
+      { url: '/public/with_kids03.jpg' },
     ]
   },
   {
@@ -78,10 +78,10 @@ export const JOURNAL_ENTRIES: JournalEntry[] = [
     date: '2025-09-27',
     type: 'photos',
     items: [
-      { url: '/private/photo1.jpg',description: 'looks like king of insects..born with crown' },
-      { url: '/private/photo2.jpg', },
-      { url: '/private/photo3.jpg' },
-      { url: '/private/photo4.jpg', description: 'new addition to my pet collection...' },
+      { url: '/public/photo1.jpg',description: 'looks like king of insects..born with crown' },
+      { url: '/public/photo2.jpg', },
+      { url: '/public/photo3.jpg' },
+      { url: '/public/photo4.jpg', description: 'new addition to my pet collection...' },
     ]
   },
   {
@@ -102,9 +102,9 @@ export const JOURNAL_ENTRIES: JournalEntry[] = [
     date: '2025-10-01',
     type: 'photos',
     items: [
-      { url: '/private/mithi_birthday.jpg'},
-      { url: '/private/mithi_birthday01.jpg'},
-      { url: '/private/mithi_birthday02.mp4'},
+      { url: '/public/mithi_birthday.jpg'},
+      { url: '/public/mithi_birthday01.jpg'},
+      { url: '/public/mithi_birthday02.mp4'},
     ]
   },
   {
@@ -119,11 +119,11 @@ export const JOURNAL_ENTRIES: JournalEntry[] = [
     date: '2025-10-01',
     type: 'photos',
     items: [
-      { url: '/private/dashain.jpg', description: 'her eyes..' },
-      { url: '/private/dashain01.jpg'},
-      { url: '/private/dashain02.mp4', description: 'mela ma mithi..' },
-      { url: '/private/hair_clip.mp4.jpg', description: 'bought this in mela' },
-      { url: '/private/ice_cream.jpg', description: 'mela ma ice cream party for all the kids..ani return aune time pheri 2kg ice cream' },
+      { url: '/public/dashain.jpg', description: 'her eyes..' },
+      { url: '/public/dashain01.jpg'},
+      { url: '/public/dashain02.mp4', description: 'mela ma mithi..' },
+      { url: '/public/hair_clip.mp4.jpg', description: 'bought this in mela' },
+      { url: '/public/ice_cream.jpg', description: 'mela ma ice cream party for all the kids..ani return aune time pheri 2kg ice cream' },
     ]
   },
   {
@@ -138,8 +138,23 @@ export const JOURNAL_ENTRIES: JournalEntry[] = [
     date: '2025-10-01',
     type: 'photos',
     items: [
-      { url: '/private/bread.jpg', description: 'fresh baked..its still hot and tasty' },
+      { url: '/public/bread.jpg', description: 'fresh baked..its still hot and tasty' },
     ]
   },
- 
+ {
+    id: 'note07-2025-10-03',
+    date: '2025-10-03',
+    type: 'note',
+    content: `Feeding time..`,
+    revealsPhotos: 'photos07-2025-10-03',
+  },
+  {
+    id: 'photos07-2025-10-03',
+    date: '2025-10-03',
+    type: 'photos',
+    items: [
+      { url: '/public/bird02.mp4', description: 'hijo evening ma bahira ghumi ra thyo' },
+      { url: '/public/bird03.mp4', description: 'maja le basera khai ra cha' },
+    ]
+  },
 ];
